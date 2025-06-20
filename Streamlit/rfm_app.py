@@ -116,7 +116,7 @@ if uploaded_file is not None:
     plt.xlabel('Recency')
     plt.ylabel('Monetary')
     st.pyplot(plt)
-
+    
     # Customer Segmentation based on Clusters
     st.subheader("Customer Segmentation by Clusters")
     cluster_summary = rfm_table.groupby('Cluster').agg({
@@ -131,17 +131,35 @@ if uploaded_file is not None:
     print(cluster_summary.shape)  # Optional: for debugging
     print(cluster_summary.columns)  # Optional: for debugging
 
+    # Flatten the columns if they are MultiIndex
+    if isinstance(cluster_summary.columns, pd.MultiIndex):
+        cluster_summary.columns = [
+            'Cluster', 
+            'Recency Mean', 
+            'Recency Std', 
+            'Frequency Mean', 
+            'Frequency Std', 
+            'Monetary Mean', 
+            'Monetary Std', 
+            'Most Common Segment'
+        ]
+    else:
     # Define expected columns
-    expected_columns = ['Cluster', 'Recency Mean', 'Recency Std', 'Frequency Mean', 'Frequency Std','Monetary Mean', 'Monetary Std', 'Most Common Segment']
+        expected_columns = ['Cluster', 'Recency Mean', 'Recency Std', 'Frequency Mean', 'Frequency Std','Monetary Mean', 'Monetary Std', 'Most Common Segment']
 
     # Assign columns only if the number matches
-    if len(cluster_summary.columns) == len(expected_columns):
-        cluster_summary.columns = expected_columns
-    else:
-        st.error(f"Column mismatch: expected {len(expected_columns)} but got {len(cluster_summary.columns)}")
+        if len(cluster_summary.columns) == len(expected_columns):
+            cluster_summary.columns = expected_columns
+        else:
+            st.error(f"Column mismatch: expected {len(expected_columns)} but got {len(cluster_summary.columns)}")
 
     # Display the summary
     st.write(cluster_summary)
+
+    # Ensure the cluster_summary DataFrame is valid for plottingif len(cluster_summary.columns) == 8:  # Ensure the expected structure
+    sns.barplot(data=cluster_summary, x='Cluster', y='Monetary Mean', palette='viridis')
+else:
+    st.error("Cluster summary does not have the expected number of columns for plotting.")
 
    
     # Visualization of Cluster Summary
