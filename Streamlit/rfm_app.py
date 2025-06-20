@@ -120,30 +120,30 @@ if uploaded_file is not None:
     # Customer Segmentation based on Clusters
     st.subheader("Customer Segmentation by Clusters")
     cluster_summary = rfm_table.groupby('Cluster').agg({
-    'Recency': ['mean', 'std'],
-    'Frequency': ['mean', 'std'],
-    'Monetary': ['mean', 'std'],
-    'Summed_RFM_Scores': ['mean', 'std'],
-    'Segments': lambda x: x.value_counts().index[0]  # Most common segment in the cluster
-     }).reset_index()
+        'Recency': ['mean', 'std'],
+        'Frequency': ['mean', 'std'],
+        'Monetary': ['mean', 'std'],
+        'Summed_RFM_Scores': ['mean', 'std'],
+        'Segments': lambda x: x.value_counts().index[0]  # Most common segment in the cluster
+    }).reset_index()
 
-     # Check the shape and columns of cluster_summary
-     print(cluster_summary.shape)  # Optional: for debugging
-     print(cluster_summary.columns)  # Optional: for debugging
+    # Check the shape and columns of cluster_summary
+    print(cluster_summary.shape)  # Optional: for debugging
+    print(cluster_summary.columns)  # Optional: for debugging
 
-     # Define expected columns
-expected_columns = ['Cluster', 'Recency Mean', 'Recency Std', 'Frequency Mean', 'Frequency Std',
-                    'Monetary Mean', 'Monetary Std', 'Most Common Segment']
+    # Define expected columns
+    expected_columns = ['Cluster', 'Recency Mean', 'Recency Std', 'Frequency Mean', 'Frequency Std','Monetary Mean', 'Monetary Std', 'Most Common Segment']
 
-# Assign columns only if the number matches
-if len(cluster_summary.columns) == len(expected_columns):
-    cluster_summary.columns = expected_columns
-else:
-    st.error(f"Column mismatch: expected {len(expected_columns)} but got {len(cluster_summary.columns)}")
+    # Assign columns only if the number matches
+    if len(cluster_summary.columns) == len(expected_columns):
+        cluster_summary.columns = expected_columns
+    else:
+        st.error(f"Column mismatch: expected {len(expected_columns)} but got {len(cluster_summary.columns)}")
 
-# Display the summary
-st.write(cluster_summary)
+    # Display the summary
+    st.write(cluster_summary)
 
+   
     # Visualization of Cluster Summary
     st.subheader("Cluster Summary Visualization")
     plt.figure(figsize=(12, 6))
