@@ -145,7 +145,7 @@ if uploaded_file is not None:
             'Most Common Segment'
         ]
     else:
-        # Check the length of columns
+        # If not MultiIndex, check the length of columns
         new_columns = [
             'Cluster', 
             'Recency Mean', 
