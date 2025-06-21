@@ -78,8 +78,11 @@ if uploaded_file is not None:
     # Heatmap of Correlation
     st.subheader("Correlation Heatmap of RFM Metrics")
     plt.figure(figsize=(5, 3))
-    sns.heatmap(rfm_table[['Recency', 'Frequency', 'Monetary']].corr(), annot=True, cmap='coolwarm', fmt='.2f')
-    st.pyplot(plt)
+    try:
+        sns.heatmap(rfm_table[['Recency', 'Frequency', 'Monetary']].corr(), annot=True, cmap='coolwarm', fmt='.2f')
+        st.pyplot(plt)
+    except Exception as e:
+        st.error(f"Error generating heatmap: {e}")
 
     # Distribution of Recency
     st.subheader("Distribution of Recency")
@@ -141,20 +144,18 @@ if uploaded_file is not None:
             'Monetary Mean', 
             'Most Common Segment'
         ]
+    elif len(cluster_summary.columns) == 7:
+        cluster_summary.columns = [
+            'Cluster', 
+            'Recency Mean', 
+            'Recency Std', 
+            'Frequency Mean', 
+            'Frequency Std', 
+            'Monetary Mean', 
+            'Most Common Segment'
+        ]
     else:
-        # If not MultiIndex, handle it directly
-        if len(cluster_summary.columns) == 7:  # Adjust if needed
-            cluster_summary.columns = [
-                'Cluster', 
-                'Recency Mean', 
-                'Recency Std', 
-                'Frequency Mean', 
-                'Frequency Std', 
-                'Monetary Mean', 
-                'Most Common Segment'
-            ]
-        else:
-            st.error(f"Unexpected number of columns: {len(cluster_summary.columns)}")
+        st.error(f"Unexpected number of columns: {len(cluster_summary.columns)}")
 
     # Check the number of columns before plotting
     expected_columns_count = 7  # Adjust according to your expected summary
