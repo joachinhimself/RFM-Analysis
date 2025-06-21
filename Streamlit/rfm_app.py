@@ -130,29 +130,44 @@ if uploaded_file is not None:
     print("Cluster Summary Shape:", cluster_summary.shape)  # Optional: for debugging
     print("Cluster Summary Columns:", cluster_summary.columns)  # Optional: for debugging
 
-# Flatten the columns if they are MultiIndex
-if isinstance(cluster_summary.columns, pd.MultiIndex):
-    cluster_summary.columns = [
-        'Cluster', 
-        'Recency Mean', 
-        'Recency Std', 
-        'Frequency Mean', 
-        'Frequency Std', 
-        'Monetary Mean', 
-        'Most Common Segment'
-    ]
+    # Flatten the columns if they are MultiIndex
+    if isinstance(cluster_summary.columns, pd.MultiIndex):
+        cluster_summary.columns = [
+            'Cluster', 
+            'Recency Mean', 
+            'Recency Std', 
+            'Frequency Mean', 
+            'Frequency Std', 
+            'Monetary Mean', 
+            'Most Common Segment'
+        ]
+    else:
+        # If not MultiIndex, handle it directly
+        if len(cluster_summary.columns) == 7:  # Adjust if needed
+            cluster_summary.columns = [
+                'Cluster', 
+                'Recency Mean', 
+                'Recency Std', 
+                'Frequency Mean', 
+                'Frequency Std', 
+                'Monetary Mean', 
+                'Most Common Segment'
+            ]
+        else:
+            st.error(f"Unexpected number of columns: {len(cluster_summary.columns)}")
 
-# Check the number of columns before plotting
-expected_columns_count = 7  # Adjust according to your expected summary
-if len(cluster_summary.columns) == expected_columns_count:
-    # Display the summary
-    st.write(cluster_summary)
+    # Check the number of columns before plotting
+    expected_columns_count = 7  # Adjust according to your expected summary
+    if len(cluster_summary.columns) == expected_columns_count:
+        # Display the summary
+        st.write(cluster_summary)
 
-    # Plotting logic
-    sns.barplot(data=cluster_summary, x='Cluster', y='Monetary Mean', palette='viridis')
-    plt.title('Monetary Mean by Cluster')
-    plt.xlabel('Cluster')
-    plt.ylabel('Monetary Mean')
-    st.pyplot()  # Display plot in Streamlit
-else:
-    st.error(f"Column mismatch: expected {expected_columns_count} but got {len(cluster_summary.columns)}")
+        # Plotting logic
+        plt.figure(figsize=(10, 6))
+        sns.barplot(data=cluster_summary, x='Cluster', y='Monetary Mean', palette='viridis')
+        plt.title('Monetary Mean by Cluster')
+        plt.xlabel('Cluster')
+        plt.ylabel('Monetary Mean')
+        st.pyplot()  # Display plot in Streamlit
+    else:
+        st.error(f"Column mismatch: expected {expected_columns_count} but got {len(cluster_summary.columns)}")
