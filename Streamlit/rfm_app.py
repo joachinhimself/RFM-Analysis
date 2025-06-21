@@ -133,6 +133,14 @@ if uploaded_file is not None:
     print("Cluster Summary Shape:", cluster_summary.shape)
     print("Cluster Summary Columns:", cluster_summary.columns)
 
+    # Define the expected number of columns
+    expected_columns_count = 7
+
+    # Automatically identify and drop the extra column if necessary
+    if len(cluster_summary.columns) > expected_columns_count:
+        # Keep only the expected number of columns
+        cluster_summary = cluster_summary.iloc[:, :expected_columns_count]
+
     # Flatten the columns if they are MultiIndex
     if isinstance(cluster_summary.columns, pd.MultiIndex):
         new_columns = [
@@ -145,7 +153,6 @@ if uploaded_file is not None:
             'Most Common Segment'
         ]
     else:
-        # If not MultiIndex, check the length of columns
         new_columns = [
             'Cluster', 
             'Recency Mean', 
