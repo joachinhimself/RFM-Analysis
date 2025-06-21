@@ -145,6 +145,7 @@ if uploaded_file is not None:
             'Most Common Segment'
         ]
     else:
+        # Check the length of columns
         new_columns = [
             'Cluster', 
             'Recency Mean', 
@@ -160,6 +161,7 @@ if uploaded_file is not None:
         cluster_summary.columns = new_columns
     else:
         st.error(f"Column mismatch: expected {len(new_columns)} but got {len(cluster_summary.columns)}")
+        st.write(cluster_summary.columns)  # Show the actual column names for debugging
 
     # Display the summary if the column assignment was successful
     if len(cluster_summary.columns) == len(new_columns):
