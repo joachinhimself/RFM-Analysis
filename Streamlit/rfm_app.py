@@ -129,23 +129,13 @@ if uploaded_file is not None:
         'Segments': lambda x: x.value_counts().index[0]  # Most common segment in the cluster
     }).reset_index()
 
-    # Check the shape and columns of cluster_summary
-    print("Cluster Summary Shape:", cluster_summary.shape)  # Optional: for debugging
-    print("Cluster Summary Columns:", cluster_summary.columns)  # Optional: for debugging
+    # Debugging: Check the shape and columns of cluster_summary
+    print("Cluster Summary Shape:", cluster_summary.shape)
+    print("Cluster Summary Columns:", cluster_summary.columns)
 
     # Flatten the columns if they are MultiIndex
     if isinstance(cluster_summary.columns, pd.MultiIndex):
-        cluster_summary.columns = [
-            'Cluster', 
-            'Recency Mean', 
-            'Recency Std', 
-            'Frequency Mean', 
-            'Frequency Std', 
-            'Monetary Mean', 
-            'Most Common Segment'
-        ]
-    elif len(cluster_summary.columns) == 7:
-        cluster_summary.columns = [
+        new_columns = [
             'Cluster', 
             'Recency Mean', 
             'Recency Std', 
@@ -155,12 +145,24 @@ if uploaded_file is not None:
             'Most Common Segment'
         ]
     else:
-        st.error(f"Unexpected number of columns: {len(cluster_summary.columns)}")
+        new_columns = [
+            'Cluster', 
+            'Recency Mean', 
+            'Recency Std', 
+            'Frequency Mean', 
+            'Frequency Std', 
+            'Monetary Mean', 
+            'Most Common Segment'
+        ]
 
-    # Check the number of columns before plotting
-    expected_columns_count = 7  # Adjust according to your expected summary
-    if len(cluster_summary.columns) == expected_columns_count:
-        # Display the summary
+    # Check if the number of new column names matches the existing columns
+    if len(new_columns) == len(cluster_summary.columns):
+        cluster_summary.columns = new_columns
+    else:
+        st.error(f"Column mismatch: expected {len(new_columns)} but got {len(cluster_summary.columns)}")
+
+    # Display the summary if the column assignment was successful
+    if len(cluster_summary.columns) == len(new_columns):
         st.write(cluster_summary)
 
         # Plotting logic
@@ -170,5 +172,3 @@ if uploaded_file is not None:
         plt.xlabel('Cluster')
         plt.ylabel('Monetary Mean')
         st.pyplot()  # Display plot in Streamlit
-    else:
-        st.error(f"Column mismatch: expected {expected_columns_count} but got {len(cluster_summary.columns)}")
